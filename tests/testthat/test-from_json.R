@@ -189,6 +189,14 @@ json_str <- jsonify::to_json(target)
 expect_equal(from_json(json_str), target)
 
 
-## NOT Json ARRAY - porse_document
 
+## other cases
+to_json( list(x = data.frame(y = 1)) )
+from_json( to_json( list(x = data.frame(y = 1)) ) )
+
+from_json('{"x":[{"y":1.0}]}')
+
+
+## JSON object of objects needs to iterate back into parse_value, 
+## so the output 'out' object needs another nested 'out' object
 
