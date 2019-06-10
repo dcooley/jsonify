@@ -287,11 +287,14 @@ namespace from_json {
   inline Rcpp::List parse_value(const rapidjson::Value& val) {
     Rcpp::Rcout << "parse_value() " << std::endl;
     int json_len = val.Size();
+    Rcpp::Rcout << "json_len " << json_len << std::endl;
     Rcpp::List out(json_len);
     Rcpp::CharacterVector names(json_len);
     
     int i = 0;
     for (rapidjson::Value::ConstMemberIterator itr = val.MemberBegin(); itr != val.MemberEnd(); ++itr) {
+      
+      Rcpp::Rcout << "iterating i : " << i << std::endl;
       
       // Get current key
       names[i] = itr->name.GetString();
@@ -353,8 +356,12 @@ namespace from_json {
       case 3: {
         Rcpp::Rcout << "value is object " << std::endl;
         const rapidjson::Value& curr_val = itr->value;
-        Rcpp::List sub_out = parse_value( curr_val );
-        out[i] = sub_out;
+        int curr_val_size = curr_val.Size();
+        Rcpp::Rcout << "curr_val_size: " << curr_val_size << std::endl;
+        //Rcpp::Rcout sub_out( curr_val_size );
+        
+        out[i] = parse_value(curr_val);
+        //return out;
         break;
       }
         
@@ -368,6 +375,7 @@ namespace from_json {
       i++;
     }
     
+    Rcpp::Rcout << "out names " << names << std::endl;
     out.attr("names") = names;
     return out;
   }
@@ -440,7 +448,6 @@ namespace from_json {
       // JSON object
       case 3: {
         const rapidjson::Value& temp_val = itr->value;
-        
         out[i] = parse_value(temp_val);
         break;
       }

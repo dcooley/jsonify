@@ -200,3 +200,12 @@ from_json('{"x":[{"y":1.0}]}')
 ## JSON object of objects needs to iterate back into parse_value, 
 ## so the output 'out' object needs another nested 'out' object
 
+## pasre_object() needs to recurse into itself
+## and keep populating sub-lists
+## 
+
+
+
+
+
+
