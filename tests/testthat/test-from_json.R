@@ -165,7 +165,30 @@ test_that("round trips work", {
 })
 
 
+# Something which could trip you up is an example where a data.frame has a nested-list as a column
+df <- data.frame( id = 1:2, val = I(list( x = 1:2, y = 3:6 ) ), val2 = I(list( a = "a", b = c("b","c") ) ) )
+js <- to_json( df )
+js
+# Is it obvious how to get this back to the original data.frame ?
+#   
+# Note also this is handled differently to jsonlite
+jsonlite::toJSON( df ) 
 
 
+# I've merged the master branch into fromjson to keep it up to date. However, it's caused this test to fail
+
+target <- data.frame(matrix(nrow = 2, ncol = 2), stringsAsFactors = FALSE)
+colnames(target) <- c("id", "val")
+target[["id"]] <- list("a", NA)
+target[["val"]] <- list(NA, c(1L, 2L, 3L, 4L))
+
+json_str <- '[{"id":"a"},{"val":[1,2,3,4]}]'
+expect_equal(from_json(json_str), target)
+
+json_str <- jsonify::to_json(target)
+expect_equal(from_json(json_str), target)
+
+
+## NOT Json ARRAY - porse_document
 
 

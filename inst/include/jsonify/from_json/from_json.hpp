@@ -54,7 +54,8 @@ namespace from_json {
     
     int doc_len = doc.Size();
     int curr_dtype;
-    for(int i = 0; i < doc_len; ++i) {
+    int i;
+    for(i = 0; i < doc_len; ++i) {
       curr_dtype = doc[i].GetType();
       // rapidjson uses separate ints for types true (2) and false (1)...combine
       // them into one value such that bool is 1.
@@ -156,6 +157,7 @@ namespace from_json {
   template<typename T>
   inline SEXP parse_array(T& array) {
     int array_len = array.Size();
+    Rcpp::Rcout << "array_len: " << array_len << std::endl;
     
     // Get set of unique data types of each value in the array.
     get_dtypes<T>(array);
@@ -165,6 +167,7 @@ namespace from_json {
     // string, bool), then return an R vector. Otherwise, return an R list.
     
     if(dtypes.size() > 2) {
+      Rcpp::Rcout << "dtypes.size == 2 " << std::endl;
       return array_to_list<T>(array, array_len);
     }
     
@@ -172,6 +175,7 @@ namespace from_json {
     if(dtypes.size() == 1) {
       data_type = *dtypes.begin();
     } else {
+      Rcpp::Rcout << "dtypes > 1 " << std::endl;
       // Dump dtypes values to a vector.
       std::vector<int> dtype_vect(dtypes.begin(), dtypes.end());
       
@@ -195,7 +199,7 @@ namespace from_json {
     
     // Get current value
     switch(data_type) {
-    
+    Rcpp::Rcout << "switching data types " << std::endl;
     // bool
     case 1: {
       Rcpp::LogicalVector out(array_len);
@@ -450,13 +454,14 @@ namespace from_json {
   inline SEXP doc_to_vector(rapidjson::Document& doc, int& dtype) {
     int doc_len = doc.Size();
     
+    int i;
     // Get current value
     switch(dtype) {
     
     // bool
     case 1: {
       Rcpp::LogicalVector out(doc_len);
-      for(int i = 0; i < doc_len; ++i) {
+      for(i = 0; i < doc_len; ++i) {
         if(doc[i].GetType() == 0) {
           out[i] = NA_LOGICAL;
         } else {
@@ -469,7 +474,7 @@ namespace from_json {
     // string
     case 5: {
       Rcpp::CharacterVector out(doc_len);
-      for(int i = 0; i < doc_len; ++i) {
+      for(i = 0; i < doc_len; ++i) {
         if(doc[i].GetType() == 0) {
           out[i] = NA_STRING;
         } else {
@@ -482,7 +487,7 @@ namespace from_json {
     // double
     case 8: {
       Rcpp::NumericVector out(doc_len);
-      for(int i = 0; i < doc_len; ++i) {
+      for(i = 0; i < doc_len; ++i) {
         if(doc[i].GetType() == 0) {
           out[i] = NA_REAL;
         } else {
@@ -495,7 +500,7 @@ namespace from_json {
     // int
     case 9: {
       Rcpp::IntegerVector out(doc_len);
-      for(int i = 0; i < doc_len; ++i) {
+      for(i = 0; i < doc_len; ++i) {
         if(doc[i].GetType() == 0) {
           out[i] = NA_INTEGER;
         } else {
@@ -520,12 +525,17 @@ namespace from_json {
   // contains a variety of data types. Returns an R list.
   inline Rcpp::List doc_to_list(rapidjson::Document& doc, bool& simplifyDataFrame) {
     int doc_len = doc.Size();
+    Rcpp::Rcout << "doc_len: " << doc_len << std::endl; 
     Rcpp::List out(doc_len);
     
     bool return_df = true;
     names_map.clear();
+    int i;
     
-    for(int i = 0; i < doc_len; ++i) {
+    for(i = 0; i < doc_len; ++i) {
+      
+      int tp = doc[i].GetType();
+      Rcpp::Rcout << "doc type " << tp<< std::endl;
       
       // Get current value
       switch(doc[i].GetType()) {
@@ -573,6 +583,7 @@ namespace from_json {
         
       // array
       case 4: {
+        Rcpp::Rcout << "case 4 - array " << std::endl;
         rapidjson::Value::Array curr_array = doc[i].GetArray();
         out[i] = parse_array<rapidjson::Value::Array>(curr_array);
         return_df = false;
@@ -634,7 +645,7 @@ namespace from_json {
     // a dataframe, with the names of "out" making up the df col headers.
     if(simplifyDataFrame && return_df) {
       Rcpp::List df_out = Rcpp::List(pv_len);
-      for(int i = 0; i < pv_len; ++i) {
+      for(i = 0; i < pv_len; ++i) {
         temp_name = names[i];
         switch(names_map[temp_name]) {
         case 10: {
@@ -737,12 +748,14 @@ namespace from_json {
     // If dtype_len is 2 and 0 does not appear in dtypes, return an
     // R list of values.
     if(dtype_len == 2 && dtypes.find(0) == dtypes.end()) {
+      Rcpp::Rcout << "doc_to_list 1" << std::endl;
       return doc_to_list(doc, simplifyDataFrame);
     }
 
     // If 3 or 4 is in dtypes, return an R list of values.
     if(dtypes.find(3) != dtypes.end() ||
        dtypes.find(4) != dtypes.end()) {
+      Rcpp::Rcout << "doc_to_list 2" << std::endl;
       return doc_to_list(doc, simplifyDataFrame);
     }
 
