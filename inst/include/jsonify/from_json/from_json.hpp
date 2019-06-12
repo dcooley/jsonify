@@ -543,7 +543,7 @@ namespace from_json {
   // contains a variety of data types. Returns an R list.
   inline Rcpp::List doc_to_list(rapidjson::Document& doc, bool& simplifyDataFrame) {
     int doc_len = doc.Size();
-    //Rcpp::Rcout << "doc_len: " << doc_len << std::endl; 
+    Rcpp::Rcout << "doc_len: " << doc_len << std::endl; 
     Rcpp::List out(doc_len);
     
     bool return_df = true;
@@ -770,6 +770,7 @@ namespace from_json {
     // If input is not an array, pass doc through parse_document(), and return
     // the result.
     if(!doc.IsArray()) {
+      Rcpp::Rcout << "parse_document" << std::endl;
       return parse_document(doc);
     }
     
@@ -784,13 +785,14 @@ namespace from_json {
 
     // If dtype_len is greater than 2, return an R list of values.
     if(dtype_len > 2) {
+      Rcpp::Rcout << "doc_to_list 0" << std::endl;
       return doc_to_list(doc, simplifyDataFrame);
     }
 
     // If dtype_len is 2 and 0 does not appear in dtypes, return an
     // R list of values.
     if(dtype_len == 2 && dtypes.find(0) == dtypes.end()) {
-      //Rcpp::Rcout << "doc_to_list 1" << std::endl;
+      Rcpp::Rcout << "doc_to_list 1" << std::endl;
       return doc_to_list(doc, simplifyDataFrame);
     }
 

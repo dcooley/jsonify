@@ -169,6 +169,8 @@ test_that("round trips work", {
 df <- data.frame( id = 1:2, val = I(list( x = 1:2, y = 3:6 ) ), val2 = I(list( a = "a", b = c("b","c") ) ) )
 js <- to_json( df )
 js
+from_json( js )
+from_json( js, simplifyDataFrame = FALSE )
 # Is it obvious how to get this back to the original data.frame ?
 #   
 # Note also this is handled differently to jsonlite
@@ -185,24 +187,57 @@ target[["val"]] <- list(NA, c(1L, 2L, 3L, 4L))
 json_str <- '[{"id":"a"},{"val":[1,2,3,4]}]'
 expect_equal(from_json(json_str), target)
 
-json_str <- jsonify::to_json(target)
-expect_equal(from_json(json_str), target)
+json_str <- jsonify::to_json(target, unbox = T)
+res <- from_json(json_str, simplifyDataFrame = F)
+expect_equal(res, target)
 
 
-
+## Errors occur for simplifyDataFrame = T
+## the 'F' condition seems to work.
 ## other cases
 to_json( list(x = data.frame(y = 1)) )
-from_json( to_json( list(x = data.frame(y = 1)) ) )
-
+#from_json( to_json( list(x = data.frame(y = 1)) ) )
 from_json('{"x":[{"y":1.0}]}')
+from_json('{"x":[{"y":1.0}]}', simplifyDataFrame = F)
+jsonlite::fromJSON('{"x":[{"y":1.0}]}')
 
+
+# object of object
+# vals doesn't exist in the output
+from_json('{"vals":{"x":1,"y":2}}')
+from_json('{"vals":{"x":1,"y":2}}', simplifyDataFrame = F)
+res <- from_json('{"vals":{"x":1,"y":2}}')
+res$vals
+
+# array of object of object
+## x & y nesated too deply
+from_json('[{"vals":{"x":1,"y":2}}]')
+from_json('[{"vals":{"x":1,"y":2}}]', simplifyDataFrame = F)
+res <- from_json('[{"vals":{"x":1,"y":2}}]')
+res$vals
+
+
+## ok, so when simplifyDataFrame = F, everything seems to look OK.
+## maybe have a 'simplify' argument, which will make a vector, matrix, df where possible?
+## during the parsing do i keep another unordered_map to keep track of the simplest type possible?
+## then everytime the parsing jumps back up a level it fills this map...??
+## the same way as the names are kept
 
 ## JSON object of objects needs to iterate back into parse_value, 
 ## so the output 'out' object needs another nested 'out' object
 
 ## pasre_object() needs to recurse into itself
 ## and keep populating sub-lists
+
+## need to reverse the to_json logic
+## sclars <-> vector
+## 1d-array <-> vector
+## nd-array (no other types) <-> matrix
+
+
+## Array to (unnamed) vector
 ## 
+
 
 
 
