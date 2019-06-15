@@ -1,3 +1,8 @@
+
+## v0.2.2
+
+* lists supported in `jsonify::writers::simple::write_value()`
+
 ## v0.2.1
 
 * `as.json()` method

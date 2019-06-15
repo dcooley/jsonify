@@ -14,9 +14,14 @@ namespace writers {
 namespace complex {
 
   template < typename Writer >
-  inline void switch_vector( Writer& writer, SEXP this_vec, bool unbox, 
-                             int digits, bool numeric_dates, 
-                             bool factors_as_string ) {
+  inline void switch_vector(
+      Writer& writer, 
+      SEXP this_vec, 
+      bool unbox,
+      int digits, 
+      bool numeric_dates, 
+      bool factors_as_string
+    ) {
     
     switch( TYPEOF( this_vec ) ) {
     case REALSXP: {
@@ -59,9 +64,15 @@ namespace complex {
   
   // working by-row, so we only use a single element of each vector
   template < typename Writer >
-  inline void switch_vector( Writer& writer, SEXP this_vec, bool unbox, 
-                             int digits, bool numeric_dates, 
-                             bool factors_as_string, int row) {
+  inline void switch_vector(
+      Writer& writer, 
+      SEXP this_vec, 
+      bool unbox, 
+      int digits, 
+      bool numeric_dates,
+      bool factors_as_string, 
+      int row
+    ) {
     
     switch( TYPEOF( this_vec ) ) {
     case REALSXP: {
@@ -105,11 +116,16 @@ namespace complex {
   }
 
   template< typename Writer >
-  inline void write_value( Writer& writer, SEXP list_element, bool unbox = false, 
-                           int digits = -1, bool numeric_dates = true,
-                           bool factors_as_string = true, std::string by = "row", 
-                           int row = -1   // for when we are recursing into a row of a data.frame
-                             ) {
+  inline void write_value(
+      Writer& writer, 
+      SEXP list_element, 
+      bool unbox = false, 
+      int digits = -1, 
+      bool numeric_dates = true,
+      bool factors_as_string = true, 
+      std::string by = "row", 
+      int row = -1   // for when we are recursing into a row of a data.frame
+  ) {
     
     int i, df_col, df_row;
     
@@ -228,6 +244,8 @@ namespace complex {
       }
       
     } else {
+      
+      int tp = TYPEOF( list_element ) ;
       
       switch( TYPEOF( list_element ) ) {
       
