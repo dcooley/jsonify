@@ -29,6 +29,10 @@ rcpp_pretty_print <- function(json) {
     invisible(.Call(`_jsonify_rcpp_pretty_print`, json))
 }
 
+rcpp_matrix <- function() {
+    .Call(`_jsonify_rcpp_matrix`)
+}
+
 source_tests <- function() {
     invisible(.Call(`_jsonify_source_tests`))
 }

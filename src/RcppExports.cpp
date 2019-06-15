@@ -82,6 +82,16 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// rcpp_matrix
+NumericMatrix rcpp_matrix();
+RcppExport SEXP _jsonify_rcpp_matrix() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_matrix());
+    return rcpp_result_gen;
+END_RCPP
+}
 // source_tests
 void source_tests();
 RcppExport SEXP _jsonify_source_tests() {
@@ -127,6 +137,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_jsonify_rcpp_pretty_json", (DL_FUNC) &_jsonify_rcpp_pretty_json, 1},
     {"_jsonify_rcpp_minify_json", (DL_FUNC) &_jsonify_rcpp_minify_json, 1},
     {"_jsonify_rcpp_pretty_print", (DL_FUNC) &_jsonify_rcpp_pretty_print, 1},
+    {"_jsonify_rcpp_matrix", (DL_FUNC) &_jsonify_rcpp_matrix, 0},
     {"_jsonify_source_tests", (DL_FUNC) &_jsonify_source_tests, 0},
     {"_jsonify_rcpp_to_json", (DL_FUNC) &_jsonify_rcpp_to_json, 6},
     {"_jsonify_rcpp_validate_json", (DL_FUNC) &_jsonify_rcpp_validate_json, 1},
